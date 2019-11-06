@@ -1,11 +1,15 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class BarrageDto {
+export class PostcardDto {
   @IsNotEmpty()
   userId: string;
   @IsNotEmpty()
   userName: string;
   @IsNotEmpty()
   content: string;
-  receivedAt: string;
+  @IsNotEmpty()
+  to: string;
+
+  contentReceivedAt: string;
+  toReceivedAt: string;
 }
