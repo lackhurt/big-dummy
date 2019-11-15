@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class PostcardDto {
   @IsNotEmpty()
-  userId: string;
+  userId: number;
   @IsNotEmpty()
   userName: string;
   @IsNotEmpty()
@@ -10,6 +10,13 @@ export class PostcardDto {
   @IsNotEmpty()
   to: string;
 
+  state: number
+
+  giftPrice: number;
+
   contentReceivedAt: string;
   toReceivedAt: string;
+  beReadyAt: string;
+  finishedAt: string;
+  avatar: string;
 }

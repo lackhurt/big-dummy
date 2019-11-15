@@ -1,11 +1,14 @@
 import { IsNotEmpty } from 'class-validator';
 
-export class BarrageDto {
+export class GiftDto {
   @IsNotEmpty()
   userId: number;
   @IsNotEmpty()
   userName: string;
   @IsNotEmpty()
-  content: string;
   receivedAt: string;
+  giftId: string;
+  giftName: string;
+  amount: number;
+  unitPrice: number;
 }
