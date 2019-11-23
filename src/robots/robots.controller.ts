@@ -35,23 +35,17 @@ export class RobotsController {
 
   @Put('/arms/prepare-postcard')
   handleArmsPreparePostcard() {
-    if (RobotsController.armsStatue !== 1) {
-      this.clickButton(2);
-      setTimeout(() => {
-        this.clickButton(3);
-      }, 9 * 1000);
-      RobotsController.armsStatue = 1;
-    }
+    this.clickButton(2);
   }
 
-  @Put('/arms/collect-postcard')
-  handleArmsCollectPostcard() {
-    this.clickButton(3);
-    RobotsController.armsStatue = 2;
-    setTimeout(() => {
-      RobotsController.armsStatue = 0;
-    }, 8000);
-  }
+  // @Put('/arms/collect-postcard')
+  // handleArmsCollectPostcard() {
+  //   this.clickButton(3);
+  //   RobotsController.armsStatue = 2;
+  //   setTimeout(() => {
+  //     RobotsController.armsStatue = 0;
+  //   }, 8000);
+  // }
 
   clickButton(num: number) {
     this.relay.setState(num, true);
@@ -62,19 +56,18 @@ export class RobotsController {
 
   @Get('/axidraw/postcard')
   async getToBeWrittenPostcard(): Promise<PostcardDto> {
-    const luckyOne = this.snsService.extractLuckyOneFromList();
+    const luckyOne = await this.snsService.extractLuckyOneFromList();
     if (luckyOne) {
+      Logger.debug(luckyOne, '/axidraw/postcard');
       this.handlePager();
-      setTimeout(() => {
-        this.handleArmsPreparePostcard();
-      }, 3000);
+      this.handleArmsPreparePostcard();
     }
     return luckyOne;
   }
 
   @Put('/axidraw/postcard/finished')
-  handleWritingPostcardStatus() {
-    this.handleArmsCollectPostcard();
-    return this.snsService.luckyOneDone();
+  async handleWritingPostcardStatus() {
+    RobotsController.armsStatue = 1;
+    return await this.snsService.markLuckyOneDone();
   }
 }

@@ -5,9 +5,9 @@ export class PostcardDto {
   userId: number;
   @IsNotEmpty()
   userName: string;
-  @IsNotEmpty()
+  // @IsNotEmpty()
   content: string;
-  @IsNotEmpty()
+  // @IsNotEmpty()
   to: string;
 
   state: number
@@ -15,6 +15,7 @@ export class PostcardDto {
   giftPrice: number;
 
   contentReceivedAt: string;
+  postcode: string;
   toReceivedAt: string;
   beReadyAt: string;
   finishedAt: string;

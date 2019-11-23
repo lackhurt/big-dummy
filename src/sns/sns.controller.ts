@@ -4,6 +4,7 @@ import { BarrageDto } from '../dto/barrage.dto';
 import { validate } from 'class-validator';
 import * as moment from 'moment';
 import { GiftDto } from '../dto/gift.dto';
+import { PostcardDto } from '../dto/postcard.dto';
 
 @Controller('sns')
 export class SnsController {
@@ -25,11 +26,9 @@ export class SnsController {
 
     const errors = await validate(postcard);
     if (!errors.length) {
-      postcard.beReadyAt = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
       // 信息完整
       await this.snsService.delUserMessages(barrageDto.userId);
 
-      // 开始写
       await this.snsService.pushToReadyList(postcard);
       Logger.log(postcard, 'has been pushed to ready list !');
     }
@@ -54,11 +53,32 @@ export class SnsController {
     return this.snsService.fetchReadyList();
   }
 
+  @Get('/live-board')
+  async handleLiveBoardInfo() {
+    const luckyOne = await this.snsService.extractLuckyOneFromList();
+    const readyList = await this.snsService.fetchReadyList();
+    const finishedList = await this.snsService.fetchFinishedPostcards();
+    const finishedCount = await this.snsService.getFinishedListLength();
+    return {
+      readyList,
+      luckyOne,
+      finishedList,
+      finishedCount,
+    };
+  }
+
   /**
    * 私信
    */
-  @Post('/message')
-  async handleReceiveMessage() {
+  @Post('/addr/:id')
+  async handleReceiveAddr(@Param('id') id, @Body() body: any) {
+    const postcard = new PostcardDto();
+    postcard.to = body.addr;
+    postcard.userId = id;
+    postcard.postcode = body.postcode;
+    postcard.toReceivedAt = moment().format('YYYY-MM-DD HH:mm:ss.SSS');
+    await this.snsService.pushToReadyList(postcard);
+    Logger.debug(postcard, '收到地址信息')
     return null;
   }
 }
